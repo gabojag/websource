@@ -41,12 +41,15 @@ public class TodoDao {
         return con;
     }
 
+    // 3. sql 작업 = CRUD 메소드 구현
+    // 전체조회 - Read
     public List<TodoDto> getList() {
 
         List<TodoDto> list = new ArrayList<>();
+
+        con = getConnection();
+        String sql = "select no, title, created_at, completed from todotbl order by no desc";
         try {
-            con = getConnection();
-            String sql = "select no, title, created_at, completed from todotbl order by no desc";
             pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -95,6 +98,7 @@ public class TodoDao {
         return dto;
     }
 
+    // 추가 - Create(insert)
     public int insert(TodoDto inserDto) {
         int result = 0;
 
@@ -115,7 +119,7 @@ public class TodoDao {
 
     }
 
-    // 수정
+    // 수정 - Update
     public int update(TodoDto inserDto) {
         int result = 0;
 
@@ -127,6 +131,26 @@ public class TodoDao {
             pstmt.setBoolean(1, inserDto.isCompleted());
             pstmt.setString(2, inserDto.getDescription());
             pstmt.setInt(3, inserDto.getNo());
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con, pstmt);
+        }
+        return result;
+
+    }
+
+    // 삭제 - Delete
+    public int delete(String no) {
+        int result = 0;
+
+        con = getConnection();
+        String sql = "DELETE FROM todotbl WHERE NO=?";
+        try {
+            pstmt = con.prepareStatement(sql);
+            // ? 해결
+            pstmt.setInt(1, Integer.parseInt(no));
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
