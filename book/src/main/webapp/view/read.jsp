@@ -1,30 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
-<%@ include file="/include/header.jsp" %>
-<h3 class="border-bottom mb-3">도서상세보기</h3>
+<%-- <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%> --%>
+<%@ include file="../include/header.jsp" %>
+<%@ page import="dto.TodoDto"%>
+<%
+  TodoDto todo = (TodoDto)request.getAttribute("todo");
+%>
+<h1 class="mt-5">Todo View</h1>
 <form action="" method="post">
-    <div class="mb-3">
-        <label for="code" class="form-label">code</label>
-        <input type="text" class="form-control" id="code" readonly value="${dto.code}" name="code">
-    </div>
-    <div class="mb-3">
-        <label for="title" class="form-label">title</label>
-        <input type="text" class="form-control" id="title" readonly value="${dto.title}" name="title">
-    </div>
-    <div class="mb-3">
-        <label for="writer" class="form-label">writer</label>
-        <input type="text" class="form-control" id="writer" readonly value="${dto.writer}" name="writer">
-    </div>
-    <div class="mb-3">
-        <label for="price" class="form-label">price</label>
-        <input type="text" class="form-control" id="price" readonly value="${dto.price}" name="price">
-    </div>
-    <div class="mb-3">
-        <label for="description" class="form-label">description</label>
-        <textarea class="form-control" id="description" rows="3" name="description" readonly>${dto.description}</textarea>
-    </div>
-    <div class="mb-3">
-        <a href='<c:url value="/list" />' class="btn btn-primary">목록</a>
-    </div>
+<div class="mb-3">
+  <label for="title" class="form-label">title</label>
+  <%-- <input type="text" class="form-control" id="title" placeholder="title" name="title" value="<%=todo.getTitle()%>"> --%>
+  <input type="text" class="form-control" id="title" placeholder="title" name="title" value="${todo.title}" readonly>
+</div>
+<div class="mb-3">
+  <label for="createdAt" class="form-label">createdAt</label>
+  <%-- <input type="text" class="form-control" id="createdAt" placeholder="createdAt" name="createdAt" value="<%=todo.getCreatedAt()%>"> --%>
+  <input type="text" class="form-control" id="createdAt" placeholder="createdAt" name="createdAt" value="${todo.createdAt}" readonly>
+</div>
+<div class="mb-3">
+  <label for="completed" class="form-check-label">completed</label>
+  <%-- completed 가 true 면 check 표시 --%>
+  <input type="checkbox" name="completed" class="form-check=input" id="completed" placeholder="completed" name="completed" disabled <c:out value="${todo.completed?'checked':''}" />>
+</div>
+<div class="mb-3">
+  <label for="description" class="form-label">description</label>
+  <%-- <textarea class="form-control" id="description" rows="3" name="description"><%=todo.getDescription()%></textarea> --%>
+  <textarea class="form-control" id="description" rows="3" name="description">${todo.description}</textarea>
+</div>
+<div>
+    <a class="btn btn-primary" href='<c:url value="/modify?no=${todo.no}" />'>수정</a>
+    <a class="btn btn-success" href='<c:url value="/list" />'>목록</a>
+</div>
 </form>
-<%@ include file="/include/section.jsp" %>
-<%@ include file="/include/footer.jsp" %>
+<%@ include file="../include/footer.jsp" %>

@@ -14,6 +14,8 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import dto.BookDto;
+import dto.ChangeDto;
+import dto.MemberDto;
 
 public class BookDao {
     private Connection con;
@@ -192,6 +194,87 @@ public class BookDao {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con, pstmt);
+        }
+        return result;
+    }
+
+    // member 작업
+    public MemberDto isLogin(MemberDto loginDto) {
+        // 로그인
+        // SELECT userid,name FROM MEMBERTBL WHERE USERID = 'hong123' AND PASSWORD =
+        // 'hong123'
+        // 'hong123'
+        MemberDto dto = null;
+        con = getConnection();
+        String sql = "SELECT userid,name FROM MEMBERTBL WHERE USERID = ? AND PASSWORD = ?";
+        try {
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, loginDto.getUserid());
+            pstmt.setString(2, loginDto.getPassword());
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                dto = new MemberDto();
+                dto.setUserid(rs.getString("userid"));
+                dto.setName(rs.getString("name"));
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con, pstmt, rs);
+        }
+        return dto;
+
+    }
+
+    public int passwordChange(ChangeDto changDto) {
+        // 비밀번호 변경
+        // UPDATE MEMBERTBL SET PASSWORD = 'hong456' WHERE USERID = 'hong123'
+        int result = 0;
+        con = getConnection();
+        String sql = "UPDATE MEMBERTBL SET PASSWORD = ? WHERE USERID = ?";
+        try {
+            pstmt = con.prepareStatement(sql);
+
+            // ? 해결
+            pstmt.setString(1, changDto.getNewPassword());
+            pstmt.setString(2, changDto.getUserid());
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con, pstmt, rs);
+        }
+        return result;
+    }
+
+    public int register(MemberDto insertDto) {
+        // 회원가입
+        // INSERT INTO memberTBL(userid,password,name,email)
+        // VALUES('hong123','hong123','홍길동','hong123@gmail.com')
+        int result = 0;
+
+        con = getConnection();
+        String sql = "INSERT INTO memberTBL(userid,password,name,email)";
+        sql += "VALUES(?,?,?,?)";
+        try {
+            pstmt = con.prepareStatement(sql);
+
+            // ? 해결
+            pstmt.setString(1, insertDto.getUserid());
+            pstmt.setString(2, insertDto.getPassword());
+            pstmt.setString(3, insertDto.getName());
+            pstmt.setString(4, insertDto.getEmail());
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             close(con, pstmt);
